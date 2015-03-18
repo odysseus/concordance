@@ -58,9 +58,9 @@ func WordCount(scanner *bufio.Scanner, caseSensitive bool) (map[string]int, int)
 	for scanner.Scan() {
 		var word string
 		if caseSensitive {
-			word = scrubWord(scanner.Text())
+			word = ScrubWord(scanner.Text())
 		} else {
-			word = scrubWord(strings.ToLower(scanner.Text()))
+			word = ScrubWord(strings.ToLower(scanner.Text()))
 		}
 
 		m[word]++
@@ -74,7 +74,7 @@ func WordCount(scanner *bufio.Scanner, caseSensitive bool) (map[string]int, int)
 
 // Takes a word token and strips non alphabetic characters from the
 // beginning and end of the word
-func scrubWord(s string) string {
+func ScrubWord(s string) string {
 	minAlpha := 0
 	maxAlpha := 0
 	anyAlpha := false
@@ -125,7 +125,7 @@ func (c *Concordance) process() {
 		// Most Used
 		c.MostUsed = append(c.MostUsed, WordTuple{Word: k, Count: v})
 
-		// Length Histogram
+		// Length Histogram - increment the counter where i is the word length
 		wordlen := len(k)
 		// Resize the length histogram if it's too short
 		if wordlen >= len(c.LengthHistogram) {
@@ -159,5 +159,7 @@ func (c *Concordance) trimHist() {
 }
 
 func (c *Concordance) TruncateTopWords(n int) {
-	c.MostUsed = c.MostUsed[:n]
+	if len(c.MostUsed) > n {
+		c.MostUsed = c.MostUsed[:n]
+	}
 }
