@@ -5,7 +5,10 @@ A Go library for generating word counts and stats about plaintext files.
 ## The Money Methods
 
 **Generating the Full Concordance**
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0cf915bc740dd937473329f40699728119621e4b
 The input data needs to be wrapped in a `bufio.Scanner`, after that specify whether you want case sensitive matching in `caseSensitive` and the maximum number of most used words to return using `topWords`
 
 ```go
@@ -20,7 +23,10 @@ Returns:
 ```
 
 **Word Count Only**
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0cf915bc740dd937473329f40699728119621e4b
 The word count method can be called separately and returns a map of the words and their counts, as well as the total number of words counted (non-unique, for unique words take the `len` of the map)
 
 ```go
@@ -35,5 +41,8 @@ Returns:
 ```
 
 **Word Scrubbing Only**
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0cf915bc740dd937473329f40699728119621e4b
 `scrubWord` can be called by itself to remove leading and trailing punctuation that is not part of the word. Note that the input to this function *must* be a token because it does none of the word splitting itself. To generate tokens from an arbitrary text data source the best approach is to wrap it in an `io.Reader` then wrap that in a `bufio.Scanner` and set the scanners split function to words using `scanner.Split(bufio.ScanWords))` (where `scanner` is the var name of the scanner).
