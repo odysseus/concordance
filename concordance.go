@@ -38,20 +38,27 @@ type Concordance struct {
 	LengthHistogram []int
 }
 
-func NewConcordance(scanner *bufio.Scanner, caseSensitive bool, topwords int) *Concordance {
+// The primary method for generating a new Concordance struct
+// scanner :: The source of the input
+// caseSensitive :: a true value treats differently cased words as different words
+// topWords :: Specifies the maximum length of the MostUsed array. A value <= 0
+// will return them all
+func NewConcordance(scanner *bufio.Scanner, caseSensitive bool, topWords int) *Concordance {
 	c := &Concordance{}
 	c.Counts, c.Total = WordCount(scanner, caseSensitive)
 	c.Unique = len(c.Counts)
 	c.process()
-	c.TruncateTopWords(topwords)
+	c.TruncateTopWords(topWords)
 
 	return c
 }
 
 // Takes a scanner, runs through it and counts unqiue words and their
-// number of occurrences. When caseSensitive is false all strings will
-// be downcased before being counted
+// number of occurrences.
+// caseSensitive :: a true value treats differently cased words as different words
+// a false value results in all words being downcased before counting
 func WordCount(scanner *bufio.Scanner, caseSensitive bool) (map[string]int, int) {
+	// Set the scanner to break on words and not lines
 	scanner.Split(bufio.ScanWords)
 	m := make(map[string]int, 4096)
 	total := 0
@@ -72,8 +79,9 @@ func WordCount(scanner *bufio.Scanner, caseSensitive bool) (map[string]int, int)
 	return m, total
 }
 
-// Takes a word token and strips non alphabetic characters from the
-// beginning and end of the word
+// Takes a word token and strips non alphabetic characters from the beginning
+// and end of the word. Any nonalphabetic characters in the middle of the word
+// are ignored
 func ScrubWord(s string) string {
 	minAlpha := 0
 	maxAlpha := 0
@@ -116,6 +124,8 @@ func inRange(n, lo, hi uint8) bool {
 	return n >= lo && n <= hi
 }
 
+// A wrapper function that runs all the process functions needed to generate
+// the concordance and other word count stats
 func (c *Concordance) process() {
 	c.LengthHistogram = make([]int, 64)
 	c.MostUsed = make([]WordTuple, 0, c.Unique)
@@ -148,6 +158,7 @@ func (c *Concordance) process() {
 	c.trimHist()
 }
 
+// Removes trailing 0 values from the histogram slice
 func (c *Concordance) trimHist() {
 	max := 0
 	for i, v := range c.LengthHistogram {
@@ -158,8 +169,9 @@ func (c *Concordance) trimHist() {
 	c.LengthHistogram = c.LengthHistogram[:max+1]
 }
 
+// Truncates the top words array to the value specified by maxWords
 func (c *Concordance) TruncateTopWords(n int) {
-	if len(c.MostUsed) > n {
+	if n > 0 && len(c.MostUsed) > n {
 		c.MostUsed = c.MostUsed[:n]
 	}
 }
